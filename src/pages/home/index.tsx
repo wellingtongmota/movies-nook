@@ -1,6 +1,41 @@
 import { Input } from "@/components/ui/input"
+import tmdb from "@/services/tmdb"
+import { Movie } from "@/types"
+import { useQuery } from "@tanstack/react-query"
+import debounce from "lodash.debounce"
+import { ChangeEvent, useCallback, useState } from "react"
 
 export default function HomePage() {
+  const [search, setSearch] = useState("")
+
+  // Função de debounce para evitar múltiplas requisições
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      setSearch(query)
+    }, 700),
+    []
+  )
+
+  // Atualiza o estado conforme o usuário digita
+  function onChange(event: ChangeEvent<HTMLInputElement>) {
+    debouncedSearch(event.target.value)
+  }
+
+  const {
+    data: moviesData = [],
+    isLoading,
+    isError
+  } = useQuery<Movie[]>({
+    queryKey: ["search", search],
+    queryFn: async () => {
+      const response = await tmdb.get(`/search/movie`, {
+        params: { query: search }
+      })
+      return response.data.results
+    },
+    enabled: !!search // Só executa a busca se `search` não estiver vazio
+  })
+
   return (
     <div>
       <section className="mx-auto flex flex-col items-center gap-10">
@@ -8,7 +43,23 @@ export default function HomePage() {
           moviesNook. Discover and save your favorite movies!
         </h2>
 
-        <Input placeholder="Search for movies" className="max-w-screen-sm" />
+        <Input
+          placeholder="Search for movies"
+          className="max-w-screen-sm"
+          onChange={onChange}
+        />
+      </section>
+
+      <section>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : isError ? (
+          <p>Error!</p>
+        ) : moviesData.length === 0 ? (
+          <p>No movies found</p>
+        ) : (
+          moviesData.map((movie) => <div key={movie.id}> {movie.title}</div>)
+        )}
       </section>
     </div>
   )
