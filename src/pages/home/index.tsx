@@ -1,11 +1,14 @@
+import { MovieCard } from "@/components/movie-card"
 import { Input } from "@/components/ui/input"
+import { WatchlistContext } from "@/context/watchlist-provider"
 import tmdb from "@/services/tmdb"
 import { Movie } from "@/types"
 import { useQuery } from "@tanstack/react-query"
 import debounce from "lodash.debounce"
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, useCallback, useContext, useState } from "react"
 
 export default function HomePage() {
+  const { movies, addMovie, removeMovie } = useContext(WatchlistContext)
   const [search, setSearch] = useState("")
 
   // Função de debounce para evitar múltiplas requisições
@@ -29,7 +32,7 @@ export default function HomePage() {
     queryKey: ["search", search],
     queryFn: async () => {
       const response = await tmdb.get(`/search/movie`, {
-        params: { query: search }
+        params: { query: search, include_adult: true }
       })
       return response.data.results
     },
@@ -58,7 +61,25 @@ export default function HomePage() {
         ) : moviesData.length === 0 ? (
           <p>No movies found</p>
         ) : (
-          moviesData.map((movie) => <div key={movie.id}> {movie.title}</div>)
+          <ul className="mx-auto flex flex-wrap justify-center gap-4 pt-4">
+            {moviesData.map((movie) => {
+              const isBookmarked = movies.some((m) => m.id === movie.id)
+
+              return (
+                <li key={movie.id} className="animate-fade-in opacity-0">
+                  <MovieCard
+                    movie={movie}
+                    isBookmarked={isBookmarked}
+                    onBookmarkClick={
+                      isBookmarked
+                        ? () => removeMovie(movie.id)
+                        : () => addMovie(movie)
+                    }
+                  />
+                </li>
+              )
+            })}
+          </ul>
         )}
       </section>
     </div>
