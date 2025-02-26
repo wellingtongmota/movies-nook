@@ -5,16 +5,19 @@ import { BrowserRouter, Route, Routes } from "react-router"
 import RootLayout from "@/pages/root-layout.tsx"
 import HomePage from "@/pages/home/index.tsx"
 import WatchlistPage from "@/pages/watchlist/index.tsx"
+import { WatchlistProvider } from "./context/watchlist-provider"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<RootLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="watchlist" element={<WatchlistPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <WatchlistProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<RootLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="watchlist" element={<WatchlistPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </WatchlistProvider>
   </StrictMode>
 )
