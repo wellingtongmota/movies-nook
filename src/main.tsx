@@ -15,8 +15,11 @@ createRoot(document.getElementById("root")!).render(
         <BrowserRouter>
           <Routes>
             <Route element={<RootLayout />}>
-              <Route index element={<HomePage />} />
-              <Route path="watchlist" element={<WatchlistPage />} />
+              <Route path="/movies-nook" element={<HomePage />} />
+              <Route
+                path="/movies-nook/watchlist"
+                element={<WatchlistPage />}
+              />
             </Route>
           </Routes>
         </BrowserRouter>
