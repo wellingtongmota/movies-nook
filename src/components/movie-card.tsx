@@ -12,7 +12,7 @@ export function MovieCard({ children, className }: GenericProps) {
 }
 
 type MovieCardImageProps = {
-  posterPath: string | null
+  posterPath: string
   alt: string
   voteAverage: number
 }
@@ -26,11 +26,7 @@ export function MovieCardImage({
   return (
     <div className={cn(["relative", className])}>
       <img
-        src={
-          posterPath
-            ? `https://image.tmdb.org/t/p/w500${posterPath}`
-            : "/no_image_500x750.svg"
-        }
+        src={posterPath}
         alt={alt}
         className="aspect-[2/3] w-full object-cover object-center"
       />

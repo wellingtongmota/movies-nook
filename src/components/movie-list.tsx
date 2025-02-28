@@ -16,7 +16,7 @@ export default function MovieList({ data: moviesData }: MovieListProps) {
   const { movies, addMovie, removeMovie } = useContext(WatchlistContext)
 
   return (
-    <div className="animate-fade-in mx-auto grid w-full gap-4 pt-4 opacity-0">
+    <div className="mx-auto grid w-full animate-fade-in gap-4 pt-4 opacity-0">
       {moviesData.map((movie) => {
         const isBookmarked = movies.some((m) => m.id === movie.id)
 
@@ -24,7 +24,11 @@ export default function MovieList({ data: moviesData }: MovieListProps) {
           <MovieCard className="flex items-center border" key={movie.id}>
             <div className="max-w-24 md:max-w-32 2xl:max-w-40">
               <MovieCardImage
-                posterPath={movie.poster_path}
+                posterPath={
+                  movie.poster_path
+                    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                    : "https://placehold.co/500x750?text=No+image"
+                }
                 alt={movie.title}
                 voteAverage={movie.vote_average}
               />
